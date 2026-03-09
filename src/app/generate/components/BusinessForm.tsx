@@ -6,6 +6,7 @@ import { Store } from '@/types/store';
 import { Product } from '@/types/product';
 import Link from 'next/link';
 import { uploadImage } from '@/lib/cloudinaryService';
+import { generateStoreAI, generateProductsAI } from '@/lib/aiClient';
 
 export default function BusinessForm() {
   const router = useRouter();
@@ -22,8 +23,60 @@ export default function BusinessForm() {
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [productImageFiles, setProductImageFiles] = useState<(File | null)[]>([null]);
   const [uploading, setUploading] = useState(false);
+  const [generatingInfo, setGeneratingInfo] = useState(false);
+  const [generatingProducts, setGeneratingProducts] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const handleGenerateStoreAI = async () => {
+    if (!formData.name && !formData.description) {
+      setError("Masukkan minimal nama atau deskripsi singkat agar AI punya konteks.");
+      return;
+    }
+
+    setGeneratingInfo(true);
+    setError(null);
+    try {
+      const context = formData.description || formData.name;
+      const data = await generateStoreAI(context);
+      setFormData(prev => ({
+        ...prev,
+        name: data.name || prev.name,
+        tagline: data.tagline || prev.tagline,
+        description: data.description || prev.description
+      }));
+    } catch (err: any) {
+      setError("AI Gagal: " + err.message);
+    } finally {
+      setGeneratingInfo(false);
+    }
+  };
+
+  const handleGenerateProductsAI = async () => {
+    if (!formData.name) {
+      setError("Masukkan nama bisnis terlebih dahulu agar AI bisa menyarankan produk yang relevan.");
+      return;
+    }
+
+    setGeneratingProducts(true);
+    setError(null);
+    try {
+      const context = `${formData.name} - ${formData.description || formData.tagline}`;
+      const data = await generateProductsAI(context);
+      
+      if (data.products && data.products.length > 0) {
+        setFormData(prev => ({
+          ...prev,
+          products: data.products
+        }));
+        setProductImageFiles(new Array(data.products.length).fill(null));
+      }
+    } catch (err: any) {
+      setError("AI Gagal: " + err.message);
+    } finally {
+      setGeneratingProducts(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -131,10 +184,34 @@ export default function BusinessForm() {
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-black text-xl">S</div>
           <span className="text-xl font-black tracking-tighter text-zinc-900 dark:text-white">Storezy</span>
         </div>
-        <h2 className="text-3xl font-bold bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-          Bangun Toko Impianmu
-        </h2>
-        <p className="text-zinc-500 mt-2">Isi detail bisnis dan produk Anda untuk memulai generasi otomatis dengan Storezy.</p>
+        <div className="mt-4">
+          <h2 className="text-3xl font-bold bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            Bangun Toko Impianmu
+          </h2>
+          <p className="text-zinc-500 mt-2">Isi detail bisnis dan produk Anda untuk memulai generasi otomatis dengan Storezy.</p>
+        </div>
+
+        <div className="mt-8 p-4 bg-blue-50 dark:bg-blue-900/10 rounded-2xl border border-blue-100 dark:border-blue-900/30 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 animate-pulse">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8Z"/><path d="M12 6a1 1 0 0 0-1 1v4a1 1 0 0 0 2 0V7a1 1 0 0 0-1-1Zm0 8a1 1 0 1 0 1 1 1 1 0 0 0-1-1Z"/>
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-bold text-blue-900 dark:text-blue-100">Bantu dengan AI?</p>
+              <p className="text-xs text-blue-700/70 dark:text-blue-300/60">Biarkan Storezy AI menulis konten untuk Anda.</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={handleGenerateStoreAI}
+            disabled={generatingInfo}
+            className="px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50"
+          >
+            {generatingInfo ? 'Berpikir...' : '🤖 Beri Ide'}
+          </button>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
@@ -223,16 +300,26 @@ export default function BusinessForm() {
             <label className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
               Daftar Produk
             </label>
-            <button
-              type="button"
-              onClick={addProduct}
-              className="text-xs font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 flex items-center gap-1 transition-colors"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-                <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
-              </svg>
-              Tambah Produk
-            </button>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={handleGenerateProductsAI}
+                disabled={generatingProducts}
+                className="text-xs font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 flex items-center gap-1 transition-colors px-3 py-1 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg disabled:opacity-50"
+              >
+                {generatingProducts ? 'Mencari...' : '✨ Otomatiskan Produk'}
+              </button>
+              <button
+                type="button"
+                onClick={addProduct}
+                className="text-xs font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 flex items-center gap-1 transition-colors px-3 py-1 bg-blue-50 dark:bg-blue-900/20 rounded-lg"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                  <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+                </svg>
+                Tambah Manual
+              </button>
+            </div>
           </div>
 
           <div className="space-y-4">
