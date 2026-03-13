@@ -20,9 +20,29 @@ export async function POST(req: Request) {
       mobile,
       description,
       redirect_url,
-      // Optional: use callback_url for webhooks if needed
-      // callback_url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/mayar/webhook`,
     });
+
+    // Persist invoice to Firestore
+    try {
+      const { collection, addDoc } = await import("firebase/firestore");
+      const { db } = await import("@/lib/firestore");
+      
+      await addDoc(collection(db, "invoices"), {
+        storeId,
+        productId,
+        amount,
+        customerName: name,
+        customerEmail: email,
+        customerMobile: mobile,
+        description,
+        mayarId: invoice.id || invoice.link_id,
+        status: "pending",
+        createdAt: new Date(),
+      });
+    } catch (dbError) {
+      console.error("Failed to save invoice to Firestore:", dbError);
+      // We still return the invoice link to the user even if DB save fails
+    }
 
     console.log("Invoice object to return:", JSON.stringify(invoice, null, 2));
     return NextResponse.json(invoice);

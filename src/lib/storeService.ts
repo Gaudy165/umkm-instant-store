@@ -74,3 +74,38 @@ export async function getStore(id: string) {
     return null;
   }
 }
+
+export async function getStoresByOwner(userId: string) {
+  const { query, where, collection, getDocs } = await import("firebase/firestore");
+  const q = query(collection(db, "stores"), where("ownerId", "==", userId));
+  const querySnapshot = await getDocs(q);
+  const stores = [];
+
+  for (const storeDoc of querySnapshot.docs) {
+    const storeData = storeDoc.data();
+    const productsSnapshot = await getDocs(
+      collection(db, "stores", storeDoc.id, "products"),
+    );
+    const products = productsSnapshot.docs.map((pDoc) => ({
+      id: pDoc.id,
+      ...pDoc.data(),
+    }));
+
+    stores.push({
+      id: storeDoc.id,
+      ...storeData,
+      products,
+    });
+  }
+
+  return stores;
+}
+
+export async function updateProductPrice(storeId: string, productId: string, newPrice: number) {
+  const { doc, updateDoc } = await import("firebase/firestore");
+  const productRef = doc(db, "stores", storeId, "products", productId);
+  await updateDoc(productRef, {
+    price: newPrice,
+    updatedAt: new Date(),
+  });
+}
