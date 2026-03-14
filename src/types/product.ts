@@ -4,5 +4,8 @@ export interface Product {
   price: number;
   description?: string;
   imageUrl?: string;
-  createdAt?: Date;
+  createdAt?: string;
+  updatedAt?: string;
 }
+
+export type ProductInput = Omit<Product, 'id' | 'createdAt'>;

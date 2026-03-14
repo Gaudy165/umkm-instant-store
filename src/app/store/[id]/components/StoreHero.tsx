@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 interface StoreHeroProps {
   name: string;
@@ -19,8 +20,15 @@ export default function StoreHero({ name, tagline, description, logoUrl }: Store
 
       <div className="max-w-7xl mx-auto px-6 text-center">
         {logoUrl && (
-          <div className="w-24 h-24 mx-auto mb-8 rounded-3xl overflow-hidden border-4 border-white dark:border-zinc-800 shadow-2xl shadow-blue-500/20">
-            <img src={logoUrl} alt={name} className="w-full h-full object-cover" />
+          <div className="w-24 h-24 mx-auto mb-8 rounded-3xl overflow-hidden border-4 border-white dark:border-zinc-800 shadow-2xl shadow-blue-500/20 relative">
+            <Image 
+              src={logoUrl} 
+              alt={name} 
+              width={96} 
+              height={96} 
+              className="w-full h-full object-cover"
+              priority
+            />
           </div>
         )}
         <div className="inline-block px-4 py-1.5 mb-6 text-xs font-bold tracking-widest uppercase text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-full animate-fade-in">

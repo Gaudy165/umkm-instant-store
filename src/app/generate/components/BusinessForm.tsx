@@ -42,6 +42,32 @@ export default function BusinessForm() {
   const [generatingInfo, setGeneratingInfo] = useState(false);
   const [generatingProducts, setGeneratingProducts] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [aiStage, setAiStage] = useState(0);
+
+  const infoStages = [
+    "Menganalisis Industri...",
+    "Mencari Kata Kunci Populer...",
+    "Menyusun Tagline Persuasif...",
+    "Menghaluskan Deskripsi Brand..."
+  ];
+
+  const productStages = [
+    "Memetakan Kebutuhan Pasar...",
+    "Kurasi Produk Terbaik...",
+    "Menentukan Harga Kompetitif...",
+    "Membuat Deskripsi Produk Menarik..."
+  ];
+
+  React.useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (generatingInfo || generatingProducts) {
+      setAiStage(0);
+      interval = setInterval(() => {
+        setAiStage(prev => (prev + 1) % 4);
+      }, 2000);
+    }
+    return () => clearInterval(interval);
+  }, [generatingInfo, generatingProducts]);
 
   const handleGenerateStoreAI = async () => {
     if (!formData.name && !formData.description) {
@@ -86,6 +112,10 @@ export default function BusinessForm() {
       setGeneratingProducts(false);
     }
   };
+
+  const Skeleton = ({ className }: { className?: string }) => (
+    <div className={`animate-pulse bg-zinc-100 dark:bg-zinc-800 rounded-xl ${className}`} />
+  );
 
   const handleSubmit = async () => {
     if (!user) return;
@@ -187,7 +217,16 @@ export default function BusinessForm() {
         ))}
       </div>
 
-      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-[48px] p-8 md:p-12 shadow-2xl shadow-zinc-500/5">
+      <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-[48px] p-8 md:p-12 shadow-2xl shadow-zinc-500/5 relative overflow-hidden">
+        {/* Premium progress bar for AI */}
+        {(generatingInfo || generatingProducts) && (
+          <div className="absolute top-0 left-0 w-full h-1 bg-zinc-100 dark:bg-zinc-800">
+            <div 
+              className="h-full bg-blue-600 transition-all duration-1000 ease-in-out shadow-[0_0_15px_rgba(37,99,235,0.5)]"
+              style={{ width: `${(aiStage + 1) * 25}%` }}
+            />
+          </div>
+        )}
         
         {/* Step 1: Business Details */}
         {step === 1 && (
@@ -195,10 +234,23 @@ export default function BusinessForm() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div>
                 <h2 className="text-4xl font-black tracking-tight mb-2">Info Bisnis</h2>
-                <p className="text-zinc-500 font-medium italic">Berikan identitas unik untuk brand Anda.</p>
+                <p className="text-zinc-500 font-medium italic">
+                  {generatingInfo ? (
+                    <span className="text-blue-600 animate-pulse font-bold">{infoStages[aiStage]}</span>
+                  ) : (
+                    "Berikan identitas unik untuk brand Anda."
+                  )}
+                </p>
               </div>
-              <button onClick={handleGenerateStoreAI} disabled={generatingInfo} className="flex items-center gap-2 px-6 py-3 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-2xl text-sm font-black hover:bg-blue-100 transition-all disabled:opacity-50">
-                <Sparkles size={16} /> {generatingInfo ? 'Menyusun...' : 'Bantu dengan AI'}
+              <button 
+                onClick={handleGenerateStoreAI} 
+                disabled={generatingInfo} 
+                className={`flex items-center gap-2 px-6 py-3 rounded-2xl text-sm font-black transition-all disabled:opacity-50 ${
+                  generatingInfo ? 'bg-blue-600 text-white animate-pulse' : 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100'
+                }`}
+              >
+                <Sparkles size={16} className={generatingInfo ? 'animate-spin' : ''} /> 
+                {generatingInfo ? 'Sedang Analisis...' : 'Bantu dengan AI'}
               </button>
             </div>
 
@@ -206,11 +258,19 @@ export default function BusinessForm() {
               <div className="lg:col-span-2 space-y-6">
                 <div className="space-y-2">
                   <label className="text-xs font-black uppercase tracking-widest text-zinc-400 ml-1">Nama Bisnis</label>
-                  <input type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="Contoh: Kedai Kopi Senja" className="w-full px-6 py-4 bg-zinc-50 dark:bg-zinc-900 border border-transparent focus:border-blue-500 rounded-2xl font-bold outline-none transition-all placeholder:text-zinc-400" />
+                  {generatingInfo ? (
+                    <Skeleton className="h-[60px] w-full" />
+                  ) : (
+                    <input type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="Contoh: Kedai Kopi Senja" className="w-full px-6 py-4 bg-zinc-50 dark:bg-zinc-900 border border-transparent focus:border-blue-500 rounded-2xl font-bold outline-none transition-all placeholder:text-zinc-400" />
+                  )}
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs font-black uppercase tracking-widest text-zinc-400 ml-1">Tagline</label>
-                  <input type="text" value={formData.tagline} onChange={(e) => setFormData({...formData, tagline: e.target.value})} placeholder="Contoh: Rasa Otentik di Setiap Tetes" className="w-full px-6 py-4 bg-zinc-50 dark:bg-zinc-900 border border-transparent focus:border-blue-500 rounded-2xl font-bold outline-none transition-all placeholder:text-zinc-400" />
+                  {generatingInfo ? (
+                    <Skeleton className="h-[60px] w-full" />
+                  ) : (
+                    <input type="text" value={formData.tagline} onChange={(e) => setFormData({...formData, tagline: e.target.value})} placeholder="Contoh: Rasa Otentik di Setiap Tetes" className="w-full px-6 py-4 bg-zinc-50 dark:bg-zinc-900 border border-transparent focus:border-blue-500 rounded-2xl font-bold outline-none transition-all placeholder:text-zinc-400" />
+                  )}
                 </div>
               </div>
               <div className="space-y-2">
@@ -231,7 +291,11 @@ export default function BusinessForm() {
 
             <div className="space-y-2">
               <label className="text-xs font-black uppercase tracking-widest text-zinc-400 ml-1">Deskripsi Bisnis</label>
-              <textarea rows={4} value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} placeholder="Ceritakan sedikit tentang brand Anda..." className="w-full px-6 py-4 bg-zinc-50 dark:bg-zinc-900 border border-transparent focus:border-blue-500 rounded-2xl font-bold outline-none transition-all resize-none placeholder:text-zinc-400" />
+              {generatingInfo ? (
+                <Skeleton className="h-[120px] w-full" />
+              ) : (
+                <textarea rows={4} value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} placeholder="Ceritakan sedikit tentang brand Anda..." className="w-full px-6 py-4 bg-zinc-50 dark:bg-zinc-900 border border-transparent focus:border-blue-500 rounded-2xl font-bold outline-none transition-all resize-none placeholder:text-zinc-400" />
+              )}
             </div>
 
             <div className="flex justify-end pt-4">
@@ -248,47 +312,76 @@ export default function BusinessForm() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div>
                 <h2 className="text-4xl font-black tracking-tight mb-2">Daftar Produk</h2>
-                <p className="text-zinc-500 font-medium italic">Katalog produk untuk dipajang di toko.</p>
+                <p className="text-zinc-500 font-medium italic">
+                  {generatingProducts ? (
+                    <span className="text-blue-600 animate-pulse font-bold">{productStages[aiStage]}</span>
+                  ) : (
+                    "Katalog produk untuk dipajang di toko."
+                  )}
+                </p>
               </div>
-              <button onClick={handleGenerateProductsAI} disabled={generatingProducts} className="flex items-center justify-center gap-3 px-8 py-4 bg-blue-600 text-white rounded-2xl text-sm font-black hover:bg-blue-700 transition-all shadow-xl shadow-blue-500/20 disabled:opacity-50">
-                <Sparkles size={18} /> {generatingProducts ? 'Eksplorasi Ide...' : 'Otomatiskan dengan AI'}
+              <button 
+                onClick={handleGenerateProductsAI} 
+                disabled={generatingProducts} 
+                className={`flex items-center justify-center gap-3 px-8 py-4 rounded-2xl text-sm font-black transition-all shadow-xl disabled:opacity-50 ${
+                  generatingProducts ? 'bg-blue-600 text-white animate-pulse shadow-blue-500/40' : 'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-500/20'
+                }`}
+              >
+                <Sparkles size={18} className={generatingProducts ? 'animate-spin' : ''} /> 
+                {generatingProducts ? 'Eksplorasi Ide...' : 'Otomatiskan dengan AI'}
               </button>
             </div>
 
             <div className="space-y-6 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
-              {formData.products?.map((product, index) => (
-                <div key={index} className="p-6 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-[32px] relative group">
-                  <button onClick={() => removeProduct(index)} className="absolute -top-2 -right-2 p-2 bg-white dark:bg-zinc-800 shadow-lg text-red-500 rounded-full hover:scale-110 opacity-0 group-hover:opacity-100 transition-all z-20">
-                    <Trash2 size={16} />
-                  </button>
-                  <div className="flex flex-col lg:flex-row gap-6">
-                    <div className="w-full lg:w-32 aspect-square relative shrink-0">
-                      <input type="file" accept="image/*" onChange={(e) => {
-                        const newFiles = [...productImageFiles];
-                        newFiles[index] = e.target.files?.[0] || null;
-                        setProductImageFiles(newFiles);
-                      }} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
-                      <div className="w-full h-full bg-white dark:bg-zinc-800 rounded-2xl flex items-center justify-center text-zinc-300 border border-zinc-200 dark:border-zinc-700 overflow-hidden">
-                        {productImageFiles[index] ? (
-                          <img src={URL.createObjectURL(productImageFiles[index]!)} className="w-full h-full object-cover" />
-                        ) : (
-                          <ImageIcon size={28} strokeWidth={1.5} />
-                        )}
-                      </div>
-                    </div>
+              {generatingProducts ? (
+                // Skeleton Cards
+                [1, 2, 3].map((i) => (
+                  <div key={i} className="p-6 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-[32px] flex flex-col lg:flex-row gap-6 opacity-60">
+                    <Skeleton className="w-full lg:w-32 aspect-square shrink-0 rounded-2xl" />
                     <div className="flex-1 space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input type="text" placeholder="Nama Produk" value={product.name} onChange={(e) => handleProductChange(index, 'name', e.target.value)} className="w-full px-5 py-3 bg-white dark:bg-zinc-800 border-none rounded-xl font-bold outline-none" />
-                        <div className="relative">
-                           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 font-bold text-sm">Rp</span>
-                           <input type="number" placeholder="Harga" value={product.price || ''} onChange={(e) => handleProductChange(index, 'price', Number(e.target.value))} className="w-full pl-12 pr-5 py-3 bg-white dark:bg-zinc-800 border-none rounded-xl font-bold outline-none" />
-                        </div>
+                        <Skeleton className="h-10 w-full" />
+                        <Skeleton className="h-10 w-full" />
                       </div>
-                      <input type="text" placeholder="Deskripsi pendek produk..." value={product.description || ''} onChange={(e) => handleProductChange(index, 'description', e.target.value)} className="w-full px-5 py-3 bg-white dark:bg-zinc-800 border-none rounded-xl font-medium text-sm outline-none placeholder:italic" />
+                      <Skeleton className="h-14 w-full" />
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                formData.products?.map((product, index) => (
+                  <div key={index} className="p-6 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-[32px] relative group">
+                    <button onClick={() => removeProduct(index)} className="absolute -top-2 -right-2 p-2 bg-white dark:bg-zinc-800 shadow-lg text-red-500 rounded-full hover:scale-110 opacity-0 group-hover:opacity-100 transition-all z-20">
+                      <Trash2 size={16} />
+                    </button>
+                    <div className="flex flex-col lg:flex-row gap-6">
+                      <div className="w-full lg:w-32 aspect-square relative shrink-0">
+                        <input type="file" accept="image/*" onChange={(e) => {
+                          const newFiles = [...productImageFiles];
+                          newFiles[index] = e.target.files?.[0] || null;
+                          setProductImageFiles(newFiles);
+                        }} className="absolute inset-0 opacity-0 cursor-pointer z-10" />
+                        <div className="w-full h-full bg-white dark:bg-zinc-800 rounded-2xl flex items-center justify-center text-zinc-300 border border-zinc-200 dark:border-zinc-700 overflow-hidden">
+                          {productImageFiles[index] ? (
+                            <img src={URL.createObjectURL(productImageFiles[index]!)} className="w-full h-full object-cover" />
+                          ) : (
+                            <ImageIcon size={28} strokeWidth={1.5} />
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex-1 space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <input type="text" placeholder="Nama Produk" value={product.name} onChange={(e) => handleProductChange(index, 'name', e.target.value)} className="w-full px-5 py-3 bg-white dark:bg-zinc-800 border-none rounded-xl font-bold outline-none" />
+                          <div className="relative">
+                             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 font-bold text-sm">Rp</span>
+                             <input type="number" placeholder="Harga" value={product.price || ''} onChange={(e) => handleProductChange(index, 'price', Number(e.target.value))} className="w-full pl-12 pr-5 py-3 bg-white dark:bg-zinc-800 border-none rounded-xl font-bold outline-none" />
+                          </div>
+                        </div>
+                        <input type="text" placeholder="Deskripsi pendek produk..." value={product.description || ''} onChange={(e) => handleProductChange(index, 'description', e.target.value)} className="w-full px-5 py-3 bg-white dark:bg-zinc-800 border-none rounded-xl font-medium text-sm outline-none placeholder:italic" />
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
 
             <button onClick={addProduct} className="w-full py-5 border-2 border-dashed border-zinc-200 dark:border-zinc-800 rounded-3xl text-zinc-400 font-black flex items-center justify-center gap-2 hover:border-blue-500 hover:text-blue-500 transition-all">

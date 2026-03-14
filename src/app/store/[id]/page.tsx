@@ -1,37 +1,53 @@
-"use client";
-
-import React, { useEffect, useState, use } from 'react';
-import StoreHero from './components/StoreHero';
-import ProductCard from './components/ProductCard';
+import React, { cache } from 'react';
+import { Metadata } from 'next';
 import { getStore } from '@/lib/storeService';
 import { Store } from '@/types/store';
+import StoreClientView from './components/StoreClientView';
 
-export default function StorePage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
-  const [store, setStore] = useState<Store | null>(null);
-  const [loading, setLoading] = useState(true);
+// Cache data fetching to avoid multiple database calls
+const getStoreCached = cache(async (id: string) => {
+  return await getStore(id);
+});
 
-  useEffect(() => {
-    const fetchStore = async () => {
-      try {
-        const data = await getStore(id);
-        setStore(data as Store);
-      } catch (error) {
-        console.error("Error fetching store:", error);
-      } finally {
-        setLoading(false);
-      }
+export async function generateMetadata({ 
+  params 
+}: { 
+  params: Promise<{ id: string }> 
+}): Promise<Metadata> {
+  const { id } = await params;
+  const store = await getStoreCached(id) as Store;
+
+  if (!store) {
+    return {
+      title: 'Toko Tidak Ditemukan - UMKM Instant Store',
     };
-    fetchStore();
-  }, [id]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black">
-        <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
   }
+
+  const title = `${store.name} | UMKM Instant Store`;
+  const description = store.tagline || store.description || `Beli produk terbaik dari ${store.name} di UMKM Instant Store.`;
+  const logoUrl = store.logoUrl || '';
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: logoUrl ? [{ url: logoUrl, width: 800, height: 600, alt: store.name }] : [],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: logoUrl ? [logoUrl] : [],
+    },
+  };
+}
+
+export default async function StorePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const store = await getStoreCached(id) as Store;
 
   if (!store) {
     return (
@@ -45,34 +61,5 @@ export default function StorePage({ params }: { params: Promise<{ id: string }> 
     );
   }
 
-  return (
-    <div className="min-h-screen bg-white dark:bg-black pb-24">
-      <StoreHero 
-        name={store.name} 
-        tagline={store.tagline} 
-        description={store.description} 
-        logoUrl={store.logoUrl}
-      />
-      
-      <div className="max-w-7xl mx-auto px-6 mt-16">
-        <div className="flex items-center justify-between mb-12">
-          <h2 className="text-3xl font-black tracking-tight">Katalog Produk</h2>
-          <div className="h-px flex-1 bg-zinc-100 dark:bg-zinc-800 mx-8 hidden md:block" />
-          <span className="text-zinc-500 font-medium">{store.products?.length || 0} Produk</span>
-        </div>
-
-        {store.products && store.products.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {store.products.map((product, index) => (
-              <ProductCard key={product.id || index} product={product} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-20 bg-zinc-50 dark:bg-zinc-900/50 rounded-3xl border border-dashed border-zinc-200 dark:border-zinc-800">
-            <p className="text-zinc-500 text-lg">Belum ada produk yang tersedia di toko ini.</p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  return <StoreClientView store={store} />;
 }

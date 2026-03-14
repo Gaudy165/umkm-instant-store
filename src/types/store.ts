@@ -7,6 +7,8 @@ export interface Store {
   description?: string;
   products?: Product[];
   logoUrl?: string;
-  ownerId?: string;
-  createdAt?: Date;
+  ownerId?: string | null;
+  createdAt?: string;
 }
+
+export type StoreInput = Omit<Store, 'id' | 'createdAt'>;

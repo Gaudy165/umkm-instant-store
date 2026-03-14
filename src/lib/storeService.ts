@@ -1,7 +1,22 @@
-import { collection, addDoc, getDoc, getDocs, doc } from "firebase/firestore";
+import { collection, addDoc, getDoc, getDocs, doc, query, where, Timestamp } from "firebase/firestore";
 import { db } from "./firestore";
+import { Store, StoreInput } from "@/types/store";
+import { Product } from "@/types/product";
 
-export async function createStore(data: any, userId?: string) {
+// Helper to convert Firebase Timestamp/Date to ISO string for serialization
+const sanitizeData = (data: any) => {
+  const result = { ...data };
+  for (const key in result) {
+    if (result[key] instanceof Timestamp) {
+      result[key] = result[key].toDate().toISOString();
+    } else if (result[key] instanceof Date) {
+      result[key] = result[key].toISOString();
+    }
+  }
+  return result;
+};
+
+export async function createStore(data: StoreInput, userId?: string): Promise<string> {
   const { products, ...storeData } = data;
 
   // Create the store document first
@@ -25,32 +40,35 @@ export async function createStore(data: any, userId?: string) {
   return storeRef.id;
 }
 
-export async function getStores() {
+export async function getStores(): Promise<Store[]> {
   const querySnapshot = await getDocs(collection(db, "stores"));
-  const stores = [];
+  const stores: Store[] = [];
 
   for (const storeDoc of querySnapshot.docs) {
-    const storeData = storeDoc.data();
+    const rawData = storeDoc.data();
+    const storeData = sanitizeData(rawData);
+    
     // Fetch products subcollection for each store
     const productsSnapshot = await getDocs(
       collection(db, "stores", storeDoc.id, "products"),
     );
     const products = productsSnapshot.docs.map((pDoc) => ({
       id: pDoc.id,
-      ...pDoc.data(),
-    }));
+      ...sanitizeData(pDoc.data()),
+    })) as Product[];
 
     stores.push({
       id: storeDoc.id,
       ...storeData,
+      name: storeData.name,
       products,
-    });
+    } as Store);
   }
 
   return stores;
 }
 
-export async function getStore(id: string) {
+export async function getStore(id: string): Promise<Store | null> {
   if (!id) return null;
   const docRef = doc(db, "stores", id);
   const docSnap = await getDoc(docRef);
@@ -62,47 +80,49 @@ export async function getStore(id: string) {
     );
     const products = productsSnapshot.docs.map((pDoc) => ({
       id: pDoc.id,
-      ...pDoc.data(),
-    }));
+      ...sanitizeData(pDoc.data()),
+    })) as Product[];
 
+    const storeData = sanitizeData(docSnap.data());
     return {
       id: docSnap.id,
-      ...docSnap.data(),
+      ...storeData,
+      name: storeData.name,
       products,
-    };
+    } as Store;
   } else {
     return null;
   }
 }
 
-export async function getStoresByOwner(userId: string) {
-  const { query, where, collection, getDocs } = await import("firebase/firestore");
+export async function getStoresByOwner(userId: string): Promise<Store[]> {
   const q = query(collection(db, "stores"), where("ownerId", "==", userId));
   const querySnapshot = await getDocs(q);
-  const stores = [];
+  const stores: Store[] = [];
 
   for (const storeDoc of querySnapshot.docs) {
-    const storeData = storeDoc.data();
+    const storeData = sanitizeData(storeDoc.data());
     const productsSnapshot = await getDocs(
       collection(db, "stores", storeDoc.id, "products"),
     );
     const products = productsSnapshot.docs.map((pDoc) => ({
       id: pDoc.id,
-      ...pDoc.data(),
-    }));
+      ...sanitizeData(pDoc.data()),
+    })) as Product[];
 
     stores.push({
       id: storeDoc.id,
       ...storeData,
+      name: storeData.name,
       products,
-    });
+    } as Store);
   }
 
   return stores;
 }
 
-export async function updateProductPrice(storeId: string, productId: string, newPrice: number) {
-  const { doc, updateDoc } = await import("firebase/firestore");
+export async function updateProductPrice(storeId: string, productId: string, newPrice: number): Promise<void> {
+  const { updateDoc } = await import("firebase/firestore");
   const productRef = doc(db, "stores", storeId, "products", productId);
   await updateDoc(productRef, {
     price: newPrice,

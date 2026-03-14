@@ -1,6 +1,6 @@
-import { AIRequestBody } from "@/types/ai";
+import { AIRequestBody, AIStoreResponse, AIProductResponse } from "@/types/ai";
 
-export const generateStoreAI = async (concept: string) => {
+export const generateStoreAI = async (concept: string): Promise<AIStoreResponse> => {
   const response = await fetch("/api/ai", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -15,10 +15,10 @@ export const generateStoreAI = async (concept: string) => {
     throw new Error(error.error || "Failed to generate store info");
   }
 
-  return response.json();
+  return response.json() as Promise<AIStoreResponse>;
 };
 
-export const generateProductsAI = async (concept: string) => {
+export const generateProductsAI = async (concept: string): Promise<AIProductResponse> => {
   const response = await fetch("/api/ai", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -33,5 +33,5 @@ export const generateProductsAI = async (concept: string) => {
     throw new Error(error.error || "Failed to generate products");
   }
 
-  return response.json();
+  return response.json() as Promise<AIProductResponse>;
 };
