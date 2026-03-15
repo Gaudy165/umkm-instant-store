@@ -52,7 +52,7 @@ export default function StoreHero({
         </div>
 
         {/* ── Content ── */}
-        <div className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-6 pt-12 sm:pt-16 pb-12">
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-6 pt-12 sm:pt-18 pb-12">
 
           {/* Logo */}
           <div className="relative mb-8 animate-fadeInUp">

@@ -46,8 +46,8 @@ Proyek ini dibangun menggunakan *stack* teknologi modern untuk memastikan perfor
 
 ## 📸 Preview Storefront
 
-![Storezy Preview](https://via.placeholder.com/800x450.png?text=Storezy+Modern+Boutique+Experience+Preview)
-*Contoh tampilan halaman muka toko yang elegan dengan Storezy.*
+![Storezy Preview](./public/images/hero-preview.png)
+*Tampilan elegan toko "Meltique Dessert" yang dibuat secara instan dengan Storezy.*
 
 ---
 
