@@ -110,7 +110,7 @@ export default function InvoicesPage() {
   /* ── Loading ── */
   if (loading) {
     return (
-      <div className="space-y-4 max-w-6xl animate-pulse">
+      <div className="space-y-4 w-full animate-pulse">
         <div className="grid grid-cols-3 gap-4">
           {[1,2,3].map((i) => <div key={i} className="h-24 rounded-2xl bg-zinc-100 dark:bg-zinc-800" />)}
         </div>
@@ -121,7 +121,7 @@ export default function InvoicesPage() {
   }
 
   return (
-    <div className="space-y-5 max-w-6xl">
+    <div className="space-y-5 w-full">
 
       {/* ── Summary cards ── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

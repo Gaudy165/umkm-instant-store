@@ -14,6 +14,8 @@ import {
   Zap,
   ChevronDown,
   User,
+  Sun,
+  Moon,
 } from 'lucide-react';
 
 const marketingLinks = [
@@ -34,10 +36,14 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [isDark, setIsDark] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   /* Mount flag — prevents SSR/client hydration mismatch */
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    setMounted(true);
+    setIsDark(document.documentElement.classList.contains('dark'));
+  }, []);
 
   /* Scroll detection */
   useEffect(() => {
@@ -62,6 +68,13 @@ export default function Navbar() {
     document.body.style.overflow = mobileOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen]);
+
+  const toggleDark = () => {
+    const next = !isDark;
+    setIsDark(next);
+    document.documentElement.classList.toggle('dark', next);
+    localStorage.setItem('theme', next ? 'dark' : 'light');
+  };
 
   // Derive values — safe to compute always, only used after mounted
   const navBase =
@@ -108,6 +121,28 @@ export default function Navbar() {
 
           {/* ── Right side ── */}
           <div className="flex items-center gap-3">
+
+            {/* Dark mode toggle — always visible on desktop */}
+            {mounted && (
+              <div className="hidden md:flex items-center p-1 bg-zinc-100 dark:bg-zinc-800/80 rounded-xl border border-zinc-200/80 dark:border-zinc-700/60">
+                <button
+                  onClick={() => isDark && toggleDark()}
+                  className={`p-1.5 rounded-lg transition-all duration-200 ${!isDark ? 'bg-white dark:bg-zinc-700 text-amber-500 shadow-sm' : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300'}`}
+                  title="Light Mode"
+                  aria-label="Light Mode"
+                >
+                  <Sun size={15} />
+                </button>
+                <button
+                  onClick={() => !isDark && toggleDark()}
+                  className={`p-1.5 rounded-lg transition-all duration-200 ${isDark ? 'bg-zinc-700 text-amber-400 shadow-sm' : 'text-zinc-400 hover:text-zinc-500'}`}
+                  title="Dark Mode"
+                  aria-label="Dark Mode"
+                >
+                  <Moon size={15} />
+                </button>
+              </div>
+            )}
             {/* Before mount: render a neutral skeleton so SSR & initial client match */}
             {!mounted ? (
               <div className="h-9 w-28 bg-zinc-100 dark:bg-zinc-800 rounded-full" />
@@ -237,6 +272,25 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
+
+              {/* Dark mode toggle — mobile */}
+              <div className="flex items-center justify-between px-4 py-3 bg-zinc-50 dark:bg-zinc-900/50 rounded-xl border border-zinc-100 dark:border-zinc-800">
+                <span className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">Tampilan</span>
+                <div className="flex items-center p-1 bg-zinc-100 dark:bg-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-700">
+                  <button
+                    onClick={() => isDark && toggleDark()}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${!isDark ? 'bg-white text-amber-500 shadow-sm' : 'text-zinc-500'}`}
+                  >
+                    <Sun size={13} /> Light
+                  </button>
+                  <button
+                    onClick={() => !isDark && toggleDark()}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${isDark ? 'bg-zinc-700 text-amber-400 shadow-sm' : 'text-zinc-400'}`}
+                  >
+                    <Moon size={13} /> Dark
+                  </button>
+                </div>
+              </div>
 
               <div className="h-px bg-zinc-100 dark:bg-zinc-800 my-2" />
 

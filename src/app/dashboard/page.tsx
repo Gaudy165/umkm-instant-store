@@ -18,6 +18,7 @@ import {
   ChevronRight,
   ShoppingBag,
   Zap,
+  Plus,
 } from 'lucide-react';
 
 /* ── Helpers ── */
@@ -132,7 +133,7 @@ export default function DashboardPage() {
   /* ── Loading state ── */
   if (data.loading) {
     return (
-      <div className="space-y-8 max-w-6xl">
+      <div className="space-y-8 w-full">
         <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
           {[1,2,3,4].map((i) => <SkeletonCard key={i} />)}
         </div>
@@ -146,7 +147,7 @@ export default function DashboardPage() {
 
   /* ── Content ── */
   return (
-    <div className="space-y-6 max-w-6xl">
+    <div className="space-y-6 w-full">
 
       {/* ── Welcome banner (only if no stores yet) ── */}
       {totalStores === 0 && (
@@ -265,9 +266,9 @@ export default function DashboardPage() {
             </div>
             <Link
               href="/generate"
-              className="flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl text-xs font-black hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-all"
             >
-              + Baru <ChevronRight size={14} />
+              <Plus size={14} /> Baru
             </Link>
           </div>
 
@@ -275,9 +276,12 @@ export default function DashboardPage() {
             {data.stores.length > 0 ? (
               <>
                 {data.stores.map((store) => (
-                  <div
+                  <Link
                     key={store.id}
-                    className="flex items-center gap-3 p-3 rounded-2xl border border-zinc-100 dark:border-zinc-800 hover:border-blue-200 dark:hover:border-blue-800/50 hover:bg-blue-50/30 dark:hover:bg-blue-950/10 transition-all group"
+                    href={`/store/${store.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-2xl border border-zinc-100 dark:border-zinc-800 hover:border-blue-200 dark:hover:border-blue-800/50 hover:bg-blue-50/30 dark:hover:bg-blue-950/10 transition-all group cursor-pointer"
                   >
                     {/* Logo */}
                     <div className="w-11 h-11 shrink-0 rounded-xl bg-blue-600 flex items-center justify-center text-white font-black text-base overflow-hidden shadow-sm shadow-blue-500/20">
@@ -288,22 +292,17 @@ export default function DashboardPage() {
 
                     {/* Info */}
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-zinc-900 dark:text-white truncate leading-none mb-0.5">{store.name}</p>
+                      <p className="text-sm font-bold text-zinc-900 dark:text-white truncate leading-none mb-0.5 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{store.name}</p>
                       <p className="text-[11px] text-zinc-400">
                         {store.products?.length || 0} produk
                       </p>
                     </div>
 
-                    {/* Visit link */}
-                    <a
-                      href={`/store/${store.id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-1.5 rounded-xl text-zinc-300 dark:text-zinc-600 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-all opacity-0 group-hover:opacity-100"
-                    >
+                    {/* Arrow icon (always visible but shifts on hover) */}
+                    <div className="p-1.5 rounded-xl text-zinc-300 dark:text-zinc-600 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all">
                       <ArrowUpRight size={16} />
-                    </a>
-                  </div>
+                    </div>
+                  </Link>
                 ))}
 
                 {/* Add more CTA */}

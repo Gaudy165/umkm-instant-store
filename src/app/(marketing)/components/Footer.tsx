@@ -33,7 +33,7 @@ const trustBadges = [
 
 export default function Footer() {
   return (
-    <footer className="bg-zinc-950 text-white overflow-hidden">
+    <footer className="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-white overflow-hidden">
 
       {/* ── CTA Banner ── */}
       <div className="max-w-7xl mx-auto px-6 pt-20">
@@ -88,10 +88,6 @@ export default function Footer() {
               Lihat Contoh Toko
             </Link>
           </div>
-
-          <p className="relative z-10 mt-6 text-blue-200/60 text-sm font-medium">
-            ✓ Tanpa biaya setup &nbsp;·&nbsp; ✓ Bebas komisi &nbsp;·&nbsp; ✓ Aktif dalam 60 detik
-          </p>
         </div>
       </div>
 
@@ -105,7 +101,7 @@ export default function Footer() {
               <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-lg group-hover:scale-110 transition-transform">S</div>
               <span className="text-xl font-black tracking-tighter">Storezy</span>
             </Link>
-            <p className="text-zinc-500 text-sm leading-relaxed max-w-xs mb-8">
+            <p className="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed max-w-xs mb-8">
               Platform berbasis AI yang membantu pelaku UMKM Indonesia membangun toko online profesional secara instan — tanpa koding, tanpa ribet.
             </p>
 
@@ -120,7 +116,7 @@ export default function Footer() {
                   key={label}
                   href="#"
                   aria-label={label}
-                  className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-zinc-500 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all"
+                  className="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 flex items-center justify-center text-zinc-500 hover:text-blue-600 dark:hover:text-white hover:bg-white dark:hover:bg-white/10 hover:border-blue-200 dark:hover:border-white/20 transition-all"
                 >
                   <Icon size={16} />
                 </a>
@@ -135,7 +131,7 @@ export default function Footer() {
               <ul className="space-y-3.5">
                 {links.map((link) => (
                   <li key={link.label}>
-                    <Link href={link.href} className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">
+                    <Link href={link.href} className="text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-white transition-colors">
                       {link.label}
                     </Link>
                   </li>
@@ -147,12 +143,12 @@ export default function Footer() {
 
         {/* ── Bottom bar ── */}
         <div className="pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-zinc-600 font-medium">
+          <p className="text-xs text-zinc-400 dark:text-zinc-600 font-medium">
             © 2026 Storezy Inc. Dirancang dengan ❤️ untuk UMKM Indonesia.
           </p>
           <div className="flex gap-6">
             {['Privasi', 'Ketentuan', 'Bantuan'].map((item) => (
-              <a key={item} href="#" className="text-xs text-zinc-600 font-medium hover:text-white transition-colors">
+              <a key={item} href="#" className="text-xs text-zinc-400 dark:text-zinc-600 font-medium hover:text-blue-600 dark:hover:text-white transition-colors">
                 {item}
               </a>
             ))}

@@ -271,7 +271,7 @@ export default function ProductsPage() {
   /* ── Loading skeleton ── */
   if (loading) {
     return (
-      <div className="space-y-4 max-w-5xl animate-pulse">
+      <div className="space-y-4 w-full animate-pulse">
         <div className="h-10 w-64 bg-zinc-100 dark:bg-zinc-800 rounded-xl" />
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
           {[1,2,3,4,5,6].map((i) => (
@@ -303,7 +303,7 @@ export default function ProductsPage() {
 
   /* ── Main ── */
   return (
-    <div className="space-y-9 max-w-6xl">
+    <div className="space-y-9 w-full">
 
       {/* ── Toolbar ── */}
       <div className="flex flex-col sm:flex-row gap-3">

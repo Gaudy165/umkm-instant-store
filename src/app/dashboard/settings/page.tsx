@@ -7,14 +7,14 @@ import { useRouter } from 'next/navigation';
 import {
   Bell,
   Moon,
-  Shield,
+  UserPen,
   LogOut,
   ChevronRight,
   CheckCircle2,
   AlertCircle,
   Trash2,
   Loader2,
-  Globe,
+  Mail,
 } from 'lucide-react';
 
 /* ── Toggle switch ── */
@@ -125,7 +125,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="max-w-2xl space-y-6">
+    <div className="w-full space-y-6">
       {/* Header */}
       <div>
         <h2 className="text-xl font-black text-zinc-900 dark:text-white">Pengaturan</h2>
@@ -140,100 +140,111 @@ export default function SettingsPage() {
         </div>
       )}
 
-      {/* Account info */}
-      <Section title="Akun">
-        <SettingRow
-          icon={Globe}
-          label="Email"
-          description={user?.email || '—'}
-          right={<span className="text-xs font-bold text-zinc-400">Tidak dapat diubah</span>}
-        />
-        <button
-          onClick={() => router.push('/dashboard/profile')}
-          className="flex items-center justify-between gap-4 py-4 w-full group"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-500 flex items-center justify-center">
-              <Shield size={17} />
-            </div>
-            <div className="text-left">
-              <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">Edit Profil</p>
-              <p className="text-xs text-zinc-400">Nama, foto profil</p>
-            </div>
-          </div>
-          <ChevronRight size={16} className="text-zinc-400 group-hover:translate-x-0.5 transition-transform" />
-        </button>
-      </Section>
+      {/* Two-column grid for large screens */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
 
-      {/* Notifications */}
-      <Section title="Notifikasi">
-        <SettingRow
-          icon={Bell}
-          label="Invoice Baru"
-          description="Notifikasi saat ada pembayaran masuk"
-          right={
-            <Toggle
-              value={notifInvoice}
-              onChange={(v) => { setNotifInvoice(v); saveNotifPref('notif_invoice', v); }}
+        {/* Left column */}
+        <div className="space-y-6">
+          {/* Account info */}
+          <Section title="Akun">
+            <SettingRow
+              icon={Mail}
+              label="Email"
+              description={user?.email || '—'}
+              right={<span className="text-xs font-bold text-zinc-400">Tidak dapat diubah</span>}
             />
-          }
-        />
-        <SettingRow
-          icon={Bell}
-          label="Promo & Update"
-          description="Tips dan fitur baru dari Storezy"
-          right={
-            <Toggle
-              value={notifPromo}
-              onChange={(v) => { setNotifPromo(v); saveNotifPref('notif_promo', v); }}
+            <button
+              onClick={() => router.push('/dashboard/profile')}
+              className="flex items-center justify-between gap-4 py-4 w-full group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-500 flex items-center justify-center">
+                  <UserPen size={17} />
+                </div>
+                <div className="text-left">
+                  <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">Edit Profil</p>
+                  <p className="text-xs text-zinc-400">Nama, foto profil</p>
+                </div>
+              </div>
+              <ChevronRight size={16} className="text-zinc-400 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          </Section>
+
+          {/* Notifications */}
+          <Section title="Notifikasi">
+            <SettingRow
+              icon={Bell}
+              label="Invoice Baru"
+              description="Notifikasi saat ada pembayaran masuk"
+              right={
+                <Toggle
+                  value={notifInvoice}
+                  onChange={(v) => { setNotifInvoice(v); saveNotifPref('notif_invoice', v); }}
+                />
+              }
             />
-          }
-        />
-      </Section>
+            <SettingRow
+              icon={Bell}
+              label="Promo & Update"
+              description="Tips dan fitur baru dari Storezy"
+              right={
+                <Toggle
+                  value={notifPromo}
+                  onChange={(v) => { setNotifPromo(v); saveNotifPref('notif_promo', v); }}
+                />
+              }
+            />
+          </Section>
+        </div>
 
-      {/* Appearance */}
-      <Section title="Tampilan">
-        <SettingRow
-          icon={Moon}
-          label="Mode Gelap"
-          description="Menggunakan tema dark pada dashboard"
-          right={<Toggle value={darkMode} onChange={handleToggleDark} />}
-        />
-      </Section>
+        {/* Right column */}
+        <div className="space-y-6">
+          {/* Appearance */}
+          <Section title="Tampilan">
+            <SettingRow
+              icon={Moon}
+              label="Mode Gelap"
+              description="Menggunakan tema dark pada dashboard"
+              right={<Toggle value={darkMode} onChange={handleToggleDark} />}
+            />
+          </Section>
 
-      {/* Danger zone */}
-      <Section title="Zona Berbahaya">
-        <SettingRow
-          icon={LogOut}
-          label="Keluar"
-          description="Logout dari akun Storezy Anda"
-          danger
-          right={
-            <button
-              onClick={handleLogout}
-              disabled={logoutLoading}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-red-600 dark:text-red-400 border border-red-100 dark:border-red-800/30 bg-red-50/50 dark:bg-red-950/10 hover:bg-red-100 dark:hover:bg-red-950/30 transition-colors disabled:opacity-60"
-            >
-              {logoutLoading ? <Loader2 size={13} className="animate-spin" /> : <LogOut size={13} />}
-              {logoutLoading ? 'Keluar…' : 'Keluar'}
-            </button>
-          }
-        />
-        <SettingRow
-          icon={Trash2}
-          label="Hapus Akun"
-          description="Tindakan ini tidak dapat dibatalkan"
-          danger
-          right={
-            <button
-              onClick={() => setShowDeleteConfirm(true)}
-              className="px-4 py-2 rounded-xl text-xs font-bold text-red-600 dark:text-red-400 border border-red-100 dark:border-red-800/30 bg-red-50/50 dark:bg-red-950/10 hover:bg-red-100 dark:hover:bg-red-950/30 transition-colors"
-            >
-              Hapus Akun
-            </button>
-          }
-        />
-      </Section>
+          {/* Danger zone */}
+          <Section title="Zona Berbahaya">
+            <SettingRow
+              icon={LogOut}
+              label="Keluar"
+              description="Logout dari akun Storezy Anda"
+              danger
+              right={
+                <button
+                  onClick={handleLogout}
+                  disabled={logoutLoading}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-red-600 dark:text-red-400 border border-red-100 dark:border-red-800/30 bg-red-50/50 dark:bg-red-950/10 hover:bg-red-100 dark:hover:bg-red-950/30 transition-colors disabled:opacity-60"
+                >
+                  {logoutLoading ? <Loader2 size={13} className="animate-spin" /> : <LogOut size={13} />}
+                  {logoutLoading ? 'Keluar…' : 'Keluar'}
+                </button>
+              }
+            />
+            <SettingRow
+              icon={Trash2}
+              label="Hapus Akun"
+              description="Tindakan ini tidak dapat dibatalkan"
+              danger
+              right={
+                <button
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-red-600 dark:text-red-400 border border-red-100 dark:border-red-800/30 bg-red-50/50 dark:bg-red-950/10 hover:bg-red-100 dark:hover:bg-red-950/30 transition-colors"
+                >
+                  Hapus Akun
+                </button>
+              }
+            />
+          </Section>
+        </div>
+
+      </div>{/* end two-col grid */}
 
       {/* Delete confirmation modal */}
       {showDeleteConfirm && (

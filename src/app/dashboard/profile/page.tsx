@@ -72,7 +72,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="max-w-2xl space-y-6">
+    <div className="w-full space-y-6">
       {/* Header */}
       <div>
         <h2 className="text-xl font-black text-zinc-900 dark:text-white">Profil Saya</h2>
@@ -93,7 +93,9 @@ export default function ProfilePage() {
         </div>
       )}
 
-      {/* Avatar card */}
+      {/* Two-column grid for large screens */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+
       <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-100 dark:border-zinc-800 p-6">
         <h3 className="text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-5">Foto Profil</h3>
         <div className="flex items-center gap-5">
@@ -205,7 +207,8 @@ export default function ProfilePage() {
           {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
           {saving ? 'Menyimpan…' : 'Simpan Perubahan'}
         </button>
-      </div>
+      </div>{/* end info card */}
+      </div>{/* end two-col grid */}
     </div>
   );
 }
