@@ -4,7 +4,6 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 [![Firebase](https://img.shields.io/badge/Firebase-12-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com/)
-[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 **Storezy** adalah platform *web builder* revolusioner yang dirancang khusus untuk membantu UMKM (Usaha Mikro, Kecil, dan Menengah) go-digital dalam hitungan menit. Tanpa perlu *coding*, tanpa perlu ribet.
 
@@ -140,12 +139,6 @@ Kami sangat terbuka untuk kontribusi! Jika Anda memiliki saran atau ingin memper
 3. Commit perubahan Anda (`git commit -m 'Menambah Fitur Keren'`).
 4. Push ke branch (`git push origin feature/FiturKeren`).
 5. Buat Pull Request.
-
----
-
-## 📄 Lisensi
-
-Proyek ini dilisensikan di bawah **Lisensi MIT**. Lihat file [LICENSE](LICENSE) untuk informasi lebih lanjut.
 
 ---
 
