@@ -63,7 +63,7 @@ Ikuti langkah-langkah berikut untuk menjalankan Storezy di mesin lokal Anda:
 
 ### 1. Klon Repositori
 ```bash
-git clone https://github.com/Username/umkm-instant-store.git
+git clone https://github.com/Gaudy165/umkm-instant-store.git
 cd umkm-instant-store
 ```
 
@@ -116,7 +116,7 @@ Storezy dirancang khusus untuk:
 
 ## 📈 Future Roadmap
 
-Kami memiliki rencana besar untuk pengembangan Storezy di masa depan:
+Saya memiliki rencana besar untuk pengembangan Storezy di masa depan:
 - [ ] 📈 Dashboard Analitik Penjualan terintegrasi.
 - [ ] 📦 Integrasi dengan sistem logistik (kurir) otomatis.
 - [ ] 💬 Chatbot layanan pelanggan berbasis AI.
@@ -127,7 +127,7 @@ Kami memiliki rencana besar untuk pengembangan Storezy di masa depan:
 
 ## 🤝 Kontribusi
 
-Kami sangat terbuka untuk kontribusi! Jika Anda memiliki saran atau ingin memperbaiki bug:
+Saya sangat terbuka untuk kontribusi! Jika Anda memiliki saran atau ingin memperbaiki bug:
 1. Fork proyek ini.
 2. Buat branch fitur baru (`git checkout -b feature/FiturKeren`).
 3. Commit perubahan Anda (`git commit -m 'Menambah Fitur Keren'`).
@@ -137,5 +137,5 @@ Kami sangat terbuka untuk kontribusi! Jika Anda memiliki saran atau ingin memper
 ---
 
 <p align="center">
-  Dibuat dengan ❤️ untuk kemajuan UMKM Indonesia oleh <b>Storezy Team</b>
+  Dibuat dengan ❤️ untuk kemajuan UMKM Indonesia oleh <b>Aditya Gaudy</b>
 </p>
