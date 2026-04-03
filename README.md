@@ -4,6 +4,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 [![Firebase](https://img.shields.io/badge/Firebase-12-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com/)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Checkout-green?style=for-the-badge&logo=vercel)](https://storezy-chi.vercel.app/)
 
 **Storezy** adalah platform *web builder* revolusioner yang dirancang khusus untuk membantu UMKM (Usaha Mikro, Kecil, dan Menengah) go-digital dalam hitungan menit. Tanpa perlu *coding*, tanpa perlu ribet.
 
@@ -14,6 +15,11 @@
 Di era digital saat ini, memiliki kehadiran online adalah sebuah keharusan. Namun, banyak pelaku UMKM yang terhambat oleh kompleksitas teknis dan biaya pembuatan website yang mahal. 
 
 **Storezy hadir untuk mendemokrasi akses perdagangan digital.** Melalui antarmuka yang intuitif dan teknologi AI, Storezy memungkinkan siapa saja untuk membangun toko online yang elegan, menerima pembayaran otomatis, dan mulai berjualan secara profesional hanya dalam beberapa langkah mudah.
+
+## 🌐 Live Demo
+
+Cek langsung bagaimana Storezy bekerja:
+👉 **[Toko Demo Live](https://storezy-chi.vercel.app/)**
 
 ---
 
@@ -46,8 +52,8 @@ Proyek ini dibangun menggunakan *stack* teknologi modern untuk memastikan perfor
 
 ## 📸 Preview Storefront
 
-![Storezy Preview](./public/images/hero-preview.png)
-*Tampilan elegan toko "Meltique Dessert" yang dibuat secara instan dengan Storezy.*
+![Storezy Preview](public/images/storezy.png)
+*Tampilan elegan dashboard dan storefront yang dibuat secara instan dengan Storezy.*
 
 ---
 
@@ -96,18 +102,6 @@ GEMINI_API_KEY=your_gemini_api_key
 # Payment Gateway (Optional/Production)
 PAYMENT_GATEWAY_API_KEY=your_key
 ```
-
----
-
-## 🌐 Cara Deploy ke Vercel
-
-Deployment ke Vercel sangatlah mudah:
-
-1. Push kode Anda ke repositori GitHub.
-2. Masuk ke [Vercel Dashboard](https://vercel.com/dashboard).
-3. Klik **New Project** dan pilih repositori Anda.
-4. Masukkan semua **Environment Variables** yang ada di `.env.local`.
-5. Klik **Deploy**.
 
 ---
 
